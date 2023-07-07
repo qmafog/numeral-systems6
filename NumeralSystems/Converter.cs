@@ -1,50 +1,147 @@
 ﻿using System;
 
+#pragma warning disable
 namespace NumeralSystems
 {
     public static class Converter
     {
-        /// <summary>
-        /// Gets the value of a positive integer to its equivalent string representation in the octal numeral systems.
-        /// </summary>
-        /// <param name="number">Source number.</param>
-        /// <returns>The equivalent string representation of the number in the octal numeral systems.</returns>
-        /// <exception cref="ArgumentException">Thrown if number is less than zero.</exception>
-        public static string GetPositiveOctal(this int number) => throw new NotImplementedException();
+        public static string GetPositiveOctal(this int number)
+        {
+            if (number < 0)
+                throw new ArgumentException("Number must be positive.");
 
-        /// <summary>
-        /// Gets the value of a positive integer to its equivalent string representation in the decimal numeral systems.
-        /// </summary>
-        /// <param name="number">Source number.</param>
-        /// <returns>The equivalent string representation of the number in the decimal numeral systems.</returns>
-        /// <exception cref="ArgumentException">Thrown if number is less than zero.</exception>
-        public static string GetPositiveDecimal(this int number) => throw new NotImplementedException();
+            if (number == 0)
+                return "0";
 
-        /// <summary>
-        /// Gets the value of a positive integer to its equivalent string representation in the hexadecimal numeral systems.
-        /// </summary>
-        /// <param name="number">Source number.</param>
-        /// <returns>The equivalent string representation of the number in the hexadecimal numeral systems.</returns>
-        /// <exception cref="ArgumentException">Thrown if number is less than zero.</exception>
-        public static string GetPositiveHex(this int number) => throw new NotImplementedException();
+            string result = string.Empty;
 
-        /// <summary>
-        /// Gets the value of a positive integer to its equivalent string representation in a specified radix.
-        /// </summary>
-        /// <param name="number">Source number.</param>
-        /// <param name="radix">Base of the numeral systems.</param>
-        /// <returns>The equivalent string representation of the number in a specified radix.</returns>
-        /// <exception cref="ArgumentException">Thrown if radix is not equal 8, 10 or 16.</exception>
-        /// <exception cref="ArgumentException">Thrown if number is less than zero.</exception>
-        public static string GetPositiveRadix(this int number, int radix) => throw new NotImplementedException();
+            while (number > 0)
+            {
+                int digit = number % 8;
+                result = digit.ToString() + result;
+                number /= 8;
+            }
 
-        /// <summary>
-        /// Gets the value of a signed integer to its equivalent string representation in a specified radix.
-        /// </summary>
-        /// <param name="number">Source number.</param>
-        /// <param name="radix">Base of the numeral systems.</param>
-        /// <returns>The equivalent string representation of the number in a specified radix.</returns>
-        /// <exception cref="ArgumentException">Thrown if radix is not equal 8, 10 or 16.</exception>
-        public static string GetRadix(this int number, int radix) => throw new NotImplementedException();
+            return result;
+        }
+
+        public static string GetPositiveDecimal(this int number)
+        {
+            if (number < 0)
+                throw new ArgumentException("Number must be positive.");
+
+            if (number == 0)
+                return "0";
+
+            string result = string.Empty;
+
+            while (number > 0)
+            {
+                int digit = number % 10;
+                result = digit.ToString() + result;
+                number /= 10;
+            }
+
+            return result;
+        }
+
+        public static string GetPositiveHex(this int number)
+        {
+            if (number < 0)
+                throw new ArgumentException("Number must be positive.");
+
+            if (number == 0)
+                return "0";
+
+            string result = string.Empty;
+
+            while (number > 0)
+            {
+                int digit = number % 16;
+                char hexChar = (digit < 10) ? (char)(digit + '0') : (char)(digit - 10 + 'A');
+                result = hexChar + result;
+                number /= 16;
+            }
+
+            return result;
+        }
+
+        public static string GetPositiveRadix(this int number, int radix)
+        {
+            if (number < 0)
+                throw new ArgumentException("Number must be positive.");
+
+            if (radix < 2 || radix > 36)
+                throw new ArgumentException("Radix must be between 2 and 36.");
+
+            if (radix != 8 && radix != 10 && radix != 16)
+            {
+                throw new ArgumentException("Radix is 8, 10 and 16 only.");
+            }
+
+            if (number == 0)
+                return "0";
+
+            string result = string.Empty;
+
+            while (number > 0)
+            {
+                int digit = number % radix;
+                char radixChar = (digit < 10) ? (char)(digit + '0') : (char)(digit - 10 + 'A');
+                result = radixChar + result;
+                number /= radix;
+            }
+
+            return result;
+        }
+
+        public static string GetNegativeRadix(this uint number, int radix)
+        {
+            if (number < 0)
+                throw new ArgumentException("Number must be positive.");
+
+            if (radix < 2 || radix > 36)
+                throw new ArgumentException("Radix must be between 2 and 36.");
+
+            if (radix != 8 && radix != 10 && radix != 16)
+            {
+                throw new ArgumentException("Radix is 8, 10 and 16 only.");
+            }
+
+            if (number == 0)
+                return "0";
+
+            string result = string.Empty;
+
+            while (number > 0)
+            {
+                uint digit = number % (uint)radix;
+                char radixChar = (digit < 10) ? (char)(digit + '0') : (char)(digit - 10 + 'A');
+                result = radixChar + result;
+                number /= (uint)radix;
+            }
+
+            return result;
+        }
+
+        public static string GetRadix(this int number, int radix)
+        {
+            if (radix < 2 || radix > 36)
+                throw new ArgumentException("Radix must be between 2 and 36.");
+
+            string result = string.Empty;
+
+            bool isNegative = number < 0;
+            if (isNegative)
+            {
+                number = -number;
+                uint newNum = uint.MaxValue - (uint)number + 1;
+                result = newNum.GetNegativeRadix(radix);
+            }
+            else
+                result = number.GetPositiveRadix(radix);
+
+            return result;
+        }
     }
 }
